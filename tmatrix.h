@@ -1,4 +1,4 @@
-﻿// ННГУ, ИИТММ, Курс "Алгоритмы и структуры данных"
+// ННГУ, ИИТММ, Курс "Алгоритмы и структуры данных"
 //
 // Copyright (c) Сысоев А.В.
 //
@@ -53,12 +53,11 @@ public:
   }
   TDynamicVector& operator=(const TDynamicVector& v)
   {
-      if (sz != v.sz)
+      if (*this != v)
       {
-          T* p = new T[v.sz];
+          sz=v.sz; 
           delete[]pMem;
-          pMem = p;
-          sz=v.sz;
+          pMem = new T[v.sz];
           for (int i = 0; i < sz; i++)
               pMem[i] = v.pMem[i];
       }
@@ -75,10 +74,14 @@ public:
   // индексация
   T& operator[](size_t ind)
   {
+      if ((ind > sz) || (ind < 0))
+          throw out_of_range("index of element is more than a len of vector");
       return pMem[ind];
   }
   const T& operator[](size_t ind) const
   {
+      if ((ind > sz) || (ind < 0))
+          throw out_of_range("index of element is more than a len of vector");
       return pMem[ind];
   }
   // индексация с контролем
@@ -108,7 +111,7 @@ public:
   }
   bool operator!=(const TDynamicVector& v) const noexcept
   {
-      return !(this *= = v);
+      return !(v==*this);
   }
 
   // скалярные операции
@@ -137,8 +140,8 @@ public:
   // векторные операции
   TDynamicVector operator+(const TDynamicVector& v)
   {
-      if(sz!=v.sz)
-          throw exception("the length of the vectors must be the same")
+      if (sz != v.sz)
+          throw exception("the length of the vectors must be the same");
       TDynamicVector tmp(sz);;
       for (int i = 0; i < tmp.sz; i++)
           tmp.pMem[i] = pMem[i] + v.pMem[i];
@@ -147,7 +150,7 @@ public:
   TDynamicVector operator-(const TDynamicVector& v)
   {
       if (sz != v.sz)
-          throw exception("the length of the vectors must be the same")
+          throw exception("the length of the vectors must be the same");
       TDynamicVector tmp(sz);
       for (int i = 0; i < tmp.sz; i++)
           tmp.pMem[i] = pMem[i] - v.pMem[i];
@@ -156,10 +159,10 @@ public:
   T operator*(const TDynamicVector& v) noexcept(noexcept(T()))
   {
       if (sz != v.sz)
-          throw exception("the length of the vectors must be the same")
-      TDynamicVector tmp(sz);
-      for (int i = 0; i < tmp.sz; i++)
-          tmp.pMem[i] = pMem[i] * v.pMem[i];
+          throw exception("the length of the vectors must be the same");
+      T tmp=0;
+      for (int i = 0; i < sz; i++)
+          tmp += pMem[i] * v.pMem[i];
       return tmp;
   }
 
